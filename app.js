@@ -8,6 +8,8 @@ const logger = require('koa-logger')
 const log4js = require('./utils/log4j')
 const users = require('./routes/users')
 const router = require('koa-router')()
+const koajwt = require('koa-jwt')
+const util = require('./utils/util')
 // var log = log4js.getLogger()
 // error handler
 onerror(app)
@@ -26,12 +28,26 @@ app.use(views(__dirname + '/views', {
 
 // logger
 app.use(async (ctx, next) => {
-  await next()
   log4js.info('out put')
+  await next().catch(err=> {
+    if(err.status == '401') {
+      ctx.status = 200
+      ctx.body = util.fail('Token认证失败', util.CODE.AUTH_ERROR)
+    }else {
+      throw err
+    }
+  })
 })
-
+app.use(koajwt({
+  secret: 'cgl'
+}).unless({
+  path: [/^\/api\/users\/login/]
+}))
 // routes
 router.prefix("/api")
+router.get('/leave/count', ctx => {
+  ctx.body = 'body'
+})
 router.use(users.routes(), users.allowedMethods())
 app.use(router.routes(), router.allowedMethods())
 
