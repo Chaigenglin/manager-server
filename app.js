@@ -7,6 +7,7 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const log4js = require('./utils/log4j')
 const users = require('./routes/users')
+const menus = require('./routes/menus')
 const router = require('koa-router')()
 const koajwt = require('koa-jwt')
 const util = require('./utils/util')
@@ -49,6 +50,7 @@ router.get('/leave/count', ctx => {
   ctx.body = 'body'
 })
 router.use(users.routes(), users.allowedMethods())
+router.use(menus.routes(), menus.allowedMethods())
 app.use(router.routes(), router.allowedMethods())
 
 // error-handling

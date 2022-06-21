@@ -80,7 +80,6 @@ router.post('/operate', async (ctx)=> {
     }
     const res = await User.findOne({$or: [{ userName }, {userEmail}] }, '_id userName userEmail')
     if(res) {
-      console.log(res);
       ctx.body = util.fail(`系统监测到有重复的用户${userName} - ${userEmail}`)
     }else {
       const doc = await Counter.findOneAndUpdate({_id: 'userId'}, { $inc: {sequence_val: 1} }, { new: true })
